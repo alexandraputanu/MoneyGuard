@@ -21,20 +21,41 @@ const Currency = lazy(() => import('./components/Currency/Currency'));
 
 function App() {
     const dispatch = useDispatch();
+
     useEffect(() => {
         dispatch(refreshThunk());
     }, [dispatch]);
 
     const { isMobile } = useMedia();
-
-    const isEditOpen = useSelector(selectIsEditModalOpen);
-    const isAddOpen = useSelector(selectIsAddModalOpen);
+    const isEditOpen = useSelector(selectIsAddModalOpen);
+    const isAddOpen = useSelector(selectIsEditModalOpen);
 
     return (
         <div className={clsx('app', isEditOpen || (isAddOpen && 'block-scroll'))}>
             <Routes>
+                <Route path="/" element={<Navigate to="/login" replace />} />
+
+                {/* Rute Publice */}
                 <Route
-                    path="/"
+                    path="login"
+                    element={
+                        <PublicRoute>
+                            <LoginPage />
+                        </PublicRoute>
+                    }
+                />
+                <Route
+                    path="register"
+                    element={
+                        <PublicRoute>
+                            <RegistrationPage />
+                        </PublicRoute>
+                    }
+                />
+
+                {/* Rute Private */}
+                <Route
+                    path="dashboard"
                     element={
                         <PrivateRoute>
                             <DashboardPage />
@@ -55,25 +76,11 @@ function App() {
                         }
                     />
                     <Route path="statistics" element={<Statistics />} />
-                    <Route path="currency" element={isMobile ? <Currency /> : <Navigate to="/" />} />
+                    <Route path="currency" element={isMobile ? <Currency /> : <Navigate to="/dashboard" />} />
                 </Route>
-                <Route
-                    path="login"
-                    element={
-                        <PublicRoute>
-                            <LoginPage />
-                        </PublicRoute>
-                    }
-                />
-                <Route
-                    path="register"
-                    element={
-                        <PublicRoute>
-                            <RegistrationPage />
-                        </PublicRoute>
-                    }
-                />
-                <Route path="*" element={<Navigate to="/" />} />
+
+                {/* Redirecționare wildcard la login pentru rute neidentificate */}
+                <Route path="*" element={<Navigate to="/login" />} />
             </Routes>
         </div>
     );
