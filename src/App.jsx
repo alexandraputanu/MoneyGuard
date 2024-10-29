@@ -13,6 +13,7 @@ import LoginPage from './pages/LoginPage/LoginPage';
 import RegistrationPage from './pages/RegistrationPage/RegistrationPage';
 import clsx from 'clsx';
 import { selectIsAddModalOpen, selectIsEditModalOpen } from './redux/Modals/slice';
+import { selectIsAuthenticated } from './redux/Auth/selectors';
 
 const Home = lazy(() => import('./components/Home/Home'));
 const Statistics = lazy(() => import('./components/Statistics/Statistics'));
@@ -26,6 +27,7 @@ function App() {
         dispatch(refreshThunk());
     }, [dispatch]);
 
+    const isAuthenticated = useSelector(selectIsAuthenticated);
     const { isMobile } = useMedia();
     const isEditOpen = useSelector(selectIsAddModalOpen);
     const isAddOpen = useSelector(selectIsEditModalOpen);
@@ -33,7 +35,8 @@ function App() {
     return (
         <div className={clsx('app', isEditOpen || (isAddOpen && 'block-scroll'))}>
             <Routes>
-                <Route path="/" element={<Navigate to="/login" replace />} />
+                {/* Redirecționare către Login sau Dashboard în funcție de autentificare */}
+                {isAuthenticated ? <Route path="/" element={<Navigate to="/dashboard" replace />} /> : <Route path="/" element={<Navigate to="/login" replace />} />}
 
                 {/* Rute Publice */}
                 <Route
@@ -79,8 +82,8 @@ function App() {
                     <Route path="currency" element={isMobile ? <Currency /> : <Navigate to="/dashboard" />} />
                 </Route>
 
-                {/* Redirecționare wildcard la login pentru rute neidentificate */}
-                <Route path="*" element={<Navigate to="/login" />} />
+                {/* Redirecționare wildcard */}
+                <Route path="*" element={<Navigate to={isAuthenticated ? '/dashboard' : '/login'} />} />
             </Routes>
         </div>
     );
