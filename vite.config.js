@@ -1,11 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
-// https://vitejs.dev/config/
 export default defineConfig({
-    base: '/MoneyGuard/', // adaugă această linie
+    base: '/MoneyGuard/', // Înlocuiește cu numele repo-ului tău GitHub
     plugins: [react()],
-    build: {
-        sourcemap: true,
-    },
 });
