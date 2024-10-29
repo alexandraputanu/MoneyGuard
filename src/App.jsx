@@ -13,7 +13,7 @@ import LoginPage from './pages/LoginPage/LoginPage';
 import RegistrationPage from './pages/RegistrationPage/RegistrationPage';
 import clsx from 'clsx';
 import { selectIsAddModalOpen, selectIsEditModalOpen } from './redux/Modals/slice';
-import { selectIsAuthenticated } from './redux/Auth/selectors';
+import { selectIsLoggedIn } from './redux/Auth/selectors';
 
 const Home = lazy(() => import('./components/Home/Home'));
 const Statistics = lazy(() => import('./components/Statistics/Statistics'));
@@ -27,7 +27,7 @@ function App() {
         dispatch(refreshThunk());
     }, [dispatch]);
 
-    const isAuthenticated = useSelector(selectIsAuthenticated);
+    const isAuthenticated = useSelector(selectIsLoggedIn);
     const { isMobile } = useMedia();
     const isEditOpen = useSelector(selectIsAddModalOpen);
     const isAddOpen = useSelector(selectIsEditModalOpen);
