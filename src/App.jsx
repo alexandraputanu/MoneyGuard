@@ -26,33 +26,15 @@ function App() {
     }, [dispatch]);
 
     const { isMobile } = useMedia();
+
     const isEditOpen = useSelector(selectIsEditModalOpen);
     const isAddOpen = useSelector(selectIsAddModalOpen);
 
     return (
         <div className={clsx('app', isEditOpen || (isAddOpen && 'block-scroll'))}>
             <Routes>
-                {/* Redirecționare automată către pagina de login */}
-                <Route path="/" element={<Navigate to="/login" replace />} />
-
                 <Route
-                    path="/login"
-                    element={
-                        <PublicRoute>
-                            <LoginPage />
-                        </PublicRoute>
-                    }
-                />
-                <Route
-                    path="/register"
-                    element={
-                        <PublicRoute>
-                            <RegistrationPage />
-                        </PublicRoute>
-                    }
-                />
-                <Route
-                    path="/dashboard"
+                    path="/"
                     element={
                         <PrivateRoute>
                             <DashboardPage />
@@ -73,9 +55,25 @@ function App() {
                         }
                     />
                     <Route path="statistics" element={<Statistics />} />
-                    <Route path="currency" element={isMobile ? <Currency /> : <Navigate to="/dashboard" />} />
+                    <Route path="currency" element={isMobile ? <Currency /> : <Navigate to="/" />} />
                 </Route>
-                <Route path="*" element={<Navigate to="/login" />} />
+                <Route
+                    path="login"
+                    element={
+                        <PublicRoute>
+                            <LoginPage />
+                        </PublicRoute>
+                    }
+                />
+                <Route
+                    path="register"
+                    element={
+                        <PublicRoute>
+                            <RegistrationPage />
+                        </PublicRoute>
+                    }
+                />
+                <Route path="*" element={<Navigate to="/" />} />
             </Routes>
         </div>
     );
