@@ -5,7 +5,7 @@
     font-style: normal;
     font-weight: 400;
     font-display: swap;
-    src: url('./fonts/Poppins-Regular.ttf') format('truetype'); /* Asigură-te că folosești ./ */
+    src: url('../public/fonts/Poppins-Regular.ttf') format('truetype'); /* Asigură-te că folosești ./ */
 }
 
 @font-face {

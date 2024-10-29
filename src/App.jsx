@@ -13,6 +13,7 @@ import LoginPage from './pages/LoginPage/LoginPage';
 import RegistrationPage from './pages/RegistrationPage/RegistrationPage';
 import clsx from 'clsx';
 import { selectIsAddModalOpen, selectIsEditModalOpen } from './redux/Modals/slice';
+import { selectIsAuthenticated } from './redux/Auth/selectors';
 
 const Home = lazy(() => import('./components/Home/Home'));
 const Statistics = lazy(() => import('./components/Statistics/Statistics'));
@@ -21,22 +22,25 @@ const Currency = lazy(() => import('./components/Currency/Currency'));
 
 function App() {
     const dispatch = useDispatch();
+
     useEffect(() => {
         dispatch(refreshThunk());
     }, [dispatch]);
 
+    const isAuthenticated = useSelector(selectIsAuthenticated);
     const { isMobile } = useMedia();
-    const isEditOpen = useSelector(selectIsEditModalOpen);
-    const isAddOpen = useSelector(selectIsAddModalOpen);
+    const isEditOpen = useSelector(selectIsAddModalOpen);
+    const isAddOpen = useSelector(selectIsEditModalOpen);
 
     return (
         <div className={clsx('app', isEditOpen || (isAddOpen && 'block-scroll'))}>
             <Routes>
-                {/* Redirecționare automată către pagina de login */}
-                <Route path="/" element={<Navigate to="/login" replace />} />
+                {/* Redirecționare către Login sau Dashboard în funcție de autentificare */}
+                {isAuthenticated ? <Route path="/" element={<Navigate to="/dashboard" replace />} /> : <Route path="/" element={<Navigate to="/login" replace />} />}
 
+                {/* Rute Publice */}
                 <Route
-                    path="/login"
+                    path="login"
                     element={
                         <PublicRoute>
                             <LoginPage />
@@ -44,15 +48,17 @@ function App() {
                     }
                 />
                 <Route
-                    path="/register"
+                    path="register"
                     element={
                         <PublicRoute>
                             <RegistrationPage />
                         </PublicRoute>
                     }
                 />
+
+                {/* Rute Private */}
                 <Route
-                    path="/dashboard"
+                    path="dashboard"
                     element={
                         <PrivateRoute>
                             <DashboardPage />
@@ -75,7 +81,9 @@ function App() {
                     <Route path="statistics" element={<Statistics />} />
                     <Route path="currency" element={isMobile ? <Currency /> : <Navigate to="/dashboard" />} />
                 </Route>
-                <Route path="*" element={<Navigate to="/login" />} />
+
+                {/* Redirecționare wildcard */}
+                <Route path="*" element={<Navigate to={isAuthenticated ? '/dashboard' : '/login'} />} />
             </Routes>
         </div>
     );
