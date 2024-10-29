@@ -1,56 +1,84 @@
-// src/App.jsx
-import React from "react";
-import {
-  HashRouter as Router,
-  Route,
-  Routes,
-  Navigate,
-} from "react-router-dom";
-import { useDispatch } from "react-redux";
-import LoginForm from "./features/auth/LoginForm";
-import RegisterForm from "./features/auth/RegisterForm";
-import Dashboard from "./features/dashboard/Dashboard";
-import { useAuth } from "./hooks/useAuth";
-import { logOut } from "./features/auth/authSlice";
+import { Navigate, Route, Routes } from 'react-router-dom';
+import { refreshThunk } from './redux/Auth/operations';
+import { useDispatch, useSelector } from 'react-redux';
+import { lazy, useEffect } from 'react';
 
-const App = () => {
-  const { isAuthenticated, user } = useAuth();
-  const dispatch = useDispatch();
+import useMedia from './hooks/useMedia';
+import './App.css';
 
-  const handleLogout = () => {
-    dispatch(logOut());
-  };
+import PublicRoute from './routes/PublicRoute';
+import PrivateRoute from './routes/PrivateRoute';
+import DashboardPage from './pages/DashboardPage/DashboardPage';
+import LoginPage from './pages/LoginPage/LoginPage';
+import RegistrationPage from './pages/RegistrationPage/RegistrationPage';
+import clsx from 'clsx';
+import { selectIsAddModalOpen, selectIsEditModalOpen } from './redux/Modals/slice';
 
-  return (
-    <Router>
-      <div>
-        {isAuthenticated && (
-          <div>
-            <span>Welcome, {user?.email || "User"}!</span>
-            <button onClick={handleLogout}>Log Out</button>
-          </div>
-        )}
-        <Routes>
-          <Route
-            path="/"
-            element={
-              isAuthenticated ? (
-                <Navigate to="/dashboard" />
-              ) : (
-                <Navigate to="/login" />
-              )
-            }
-          />
-          <Route path="/login" element={<LoginForm />} />
-          <Route path="/register" element={<RegisterForm />} />
-          <Route
-            path="/dashboard"
-            element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" />}
-          />
-        </Routes>
-      </div>
-    </Router>
-  );
-};
+const Home = lazy(() => import('./components/Home/Home'));
+const Statistics = lazy(() => import('./components/Statistics/Statistics'));
+const Balance = lazy(() => import('./components/Balance/Balance'));
+const Currency = lazy(() => import('./components/Currency/Currency'));
+
+function App() {
+    const dispatch = useDispatch();
+    useEffect(() => {
+        dispatch(refreshThunk());
+    }, [dispatch]);
+
+    const { isMobile } = useMedia();
+    const isEditOpen = useSelector(selectIsEditModalOpen);
+    const isAddOpen = useSelector(selectIsAddModalOpen);
+
+    return (
+        <div className={clsx('app', isEditOpen || (isAddOpen && 'block-scroll'))}>
+            <Routes>
+                {/* Redirecționare automată către pagina de login */}
+                <Route path="/" element={<Navigate to="/login" replace />} />
+
+                <Route
+                    path="/login"
+                    element={
+                        <PublicRoute>
+                            <LoginPage />
+                        </PublicRoute>
+                    }
+                />
+                <Route
+                    path="/register"
+                    element={
+                        <PublicRoute>
+                            <RegistrationPage />
+                        </PublicRoute>
+                    }
+                />
+                <Route
+                    path="/dashboard"
+                    element={
+                        <PrivateRoute>
+                            <DashboardPage />
+                        </PrivateRoute>
+                    }
+                >
+                    <Route
+                        index
+                        element={
+                            isMobile ? (
+                                <>
+                                    <Balance />
+                                    <Home />
+                                </>
+                            ) : (
+                                <Home />
+                            )
+                        }
+                    />
+                    <Route path="statistics" element={<Statistics />} />
+                    <Route path="currency" element={isMobile ? <Currency /> : <Navigate to="/dashboard" />} />
+                </Route>
+                <Route path="*" element={<Navigate to="/login" />} />
+            </Routes>
+        </div>
+    );
+}
 
 export default App;

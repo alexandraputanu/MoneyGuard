@@ -1,0 +1,39 @@
+.select {
+  margin-bottom: 20px;
+}
+.selectContainer {
+ 
+  display: flex;
+  flex-direction: column;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media only screen and (max-width: 767.98px) {
+  .selectContainer {
+   width: 280px;
+   margin-top: 32px;
+  }
+}
+
+@media only screen and (min-width: 768px) {
+  .select {
+    min-width: 160px;
+  }
+  .selectContainer {
+    flex-direction: row;
+    gap: 16px;
+    max-width: 336px;
+  }
+}
+
+@media only screen and (min-width: 1280px) {
+    .select {
+    min-width: 180px;
+  }
+  .selectContainer {
+    gap: 32px;
+    max-width: 395px;
+  }
+}
+
