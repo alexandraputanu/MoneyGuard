@@ -35,10 +35,10 @@ function App() {
     return (
         <div className={clsx('app', isEditOpen || (isAddOpen && 'block-scroll'))}>
             <Routes>
-                {/* Redirecționare către Login sau Dashboard în funcție de autentificare */}
+                {/* Redirecționare către Login/Dashboard în funcție de autentificare */}
                 {isAuthenticated ? <Route path="/" element={<Navigate to="/dashboard" replace />} /> : <Route path="/" element={<Navigate to="/login" replace />} />}
 
-                {/* Rute Publice */}
+                {/* Rute Publice  */}
                 <Route
                     path="login"
                     element={
