@@ -1,4 +1,6 @@
-export const formatter = new Intl.NumberFormat('en-US', {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
+export const formatter = new Intl.NumberFormat('ro-RO', {
+    style: 'currency',
+    currency: 'RON',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
 });

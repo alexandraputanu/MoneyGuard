@@ -1,9 +1,17 @@
 export function getFormattedTransactions(transactions, categories) {
     return transactions.map(transaction => getFormattedTransaction(transaction, categories)).toSorted((a, b) => b.date.localeCompare(a.date));
 }
+
 function getFormattedTransaction(transaction, categories) {
     const { transactionDate: date, amount: sum, categoryId, type, comment, id } = transaction;
-    const newTransaction = { id, date, type: type === 'EXPENSE' ? '-' : '+', category: getCategoryName(categoryId, categories), comment, sum: Math.abs(sum) };
+    const newTransaction = {
+        id,
+        date,
+        type: type === 'EXPENSE' ? '-' : '+',
+        category: getCategoryName(categoryId, categories),
+        comment,
+        sum: `${Math.abs(sum)} lei`, // Adaugă simbolul monedei aici
+    };
     return newTransaction;
 }
 
