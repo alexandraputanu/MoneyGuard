@@ -1,5 +1,6 @@
 import clsx from 'clsx';
 import { useDispatch } from 'react-redux';
+import { useState } from 'react';
 
 import useMedia from '../../hooks/useMedia';
 import { deleteTransactions } from '../../redux/Transactions/operations';
@@ -13,14 +14,17 @@ import { getBalanceThunk } from '../../redux/Auth/operations';
 function TransactionItem({ transaction, id }) {
     const dispatch = useDispatch();
     const { isMobile } = useMedia();
+    const [isModalOpen, setIsModalOpen] = useState(false); // Adaugăm starea internă pentru modal
+
     const idForModal = id;
     const style = getStyleByType(transaction.type);
+
     function onEdit() {
         if (!isModalOpen) {
-            // Adaugă această verificare
             const newId = idForModal;
             dispatch(addEditId(newId));
             dispatch(openEditModal());
+            setIsModalOpen(true); // Setăm modalul ca fiind deschis
         }
     }
 
